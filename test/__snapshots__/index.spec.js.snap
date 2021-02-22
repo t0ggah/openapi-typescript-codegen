@@ -229,6 +229,9 @@ async function sendRequest(options: ApiRequestOptions, url: string): Promise<Res
         headers: await getHeaders(options),
         body: getRequestBody(options),
     };
+    if (OpenAPI.WITH_CREDENTIALS) {
+        request.credentials = 'include';
+    }
     return await fetch(url, request);
 }
 
@@ -284,7 +287,7 @@ function catchErrors(options: ApiRequestOptions, result: ApiResult): void {
 /**
  * Request using fetch client
  * @param options The request options from the the service
- * @result ApiResult
+ * @returns ApiResult
  * @throws ApiError
  */
 export async function request(options: ApiRequestOptions): Promise<ApiResult> {
@@ -315,9 +318,7 @@ export async function request(options: ApiRequestOptions): Promise<ApiResult> {
 
 
     return result;
-}
-
-"
+}"
 `;
 
 exports[`v2 should generate: ./test/generated/v2/index.ts 1`] = `
@@ -413,6 +414,7 @@ export { $SimpleReference } from './schemas/$SimpleReference';
 export { $SimpleString } from './schemas/$SimpleString';
 export { $SimpleStringWithPattern } from './schemas/$SimpleStringWithPattern';
 
+export { CollectionFormatService } from './services/CollectionFormatService';
 export { ComplexService } from './services/ComplexService';
 export { DefaultsService } from './services/DefaultsService';
 export { DuplicateService } from './services/DuplicateService';
@@ -652,7 +654,8 @@ import type { ModelWithString } from './ModelWithString';
 export type ModelThatExtends = (ModelWithString & {
     propExtendsA?: string,
     propExtendsB?: ModelWithString,
-});"
+});
+"
 `;
 
 exports[`v2 should generate: ./test/generated/v2/models/ModelThatExtendsExtends.ts 1`] = `
@@ -669,7 +672,8 @@ import type { ModelWithString } from './ModelWithString';
 export type ModelThatExtendsExtends = (ModelWithString & ModelThatExtends & {
     propExtendsC?: string,
     propExtendsD?: ModelWithString,
-});"
+});
+"
 `;
 
 exports[`v2 should generate: ./test/generated/v2/models/ModelWithArray.ts 1`] = `
@@ -786,6 +790,10 @@ export type ModelWithEnum = {
      * These are the HTTP error code enums
      */
     statusCode?: ModelWithEnum.statusCode;
+    /**
+     * Simple boolean enum
+     */
+    bool?: boolean;
 }
 
 export namespace ModelWithEnum {
@@ -972,6 +980,7 @@ export type ModelWithProperties = {
     number?: number;
     boolean?: boolean;
     reference?: ModelWithString;
+    'property with space'?: string;
     readonly '@namespace.string'?: string;
     readonly '@namespace.integer'?: number;
 }
@@ -1451,6 +1460,9 @@ export const $ModelWithEnum = {
         statusCode: {
             type: 'Enum',
         },
+        bool: {
+            type: 'boolean',
+        },
     },
 };"
 `;
@@ -1645,6 +1657,9 @@ export const $ModelWithProperties = {
         reference: {
             type: 'ModelWithString',
         },
+        'property with space': {
+            type: 'string',
+        },
         '@namespace.string': {
             type: 'string',
             isReadOnly: true,
@@ -1748,6 +1763,47 @@ export const $SimpleStringWithPattern = {
 };"
 `;
 
+exports[`v2 should generate: ./test/generated/v2/services/CollectionFormatService.ts 1`] = `
+"/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
+import { request as __request } from '../core/request';
+import { OpenAPI } from '../core/OpenAPI';
+
+export class CollectionFormatService {
+
+    /**
+     * @param parameterArrayCsv This is an array parameter that is send as csv format (comma-separated values)
+     * @param parameterArraySsv This is an array parameter that is send as ssv format (space-separated values)
+     * @param parameterArrayTsv This is an array parameter that is send as tsv format (tab-separated values)
+     * @param parameterArrayPipes This is an array parameter that is send as pipes format (pipe-separated values)
+     * @param parameterArrayMulti This is an array parameter that is send as multi format (multiple parameter instances)
+     * @throws ApiError
+     */
+    public static async collectionFormat(
+        parameterArrayCsv: Array<string>,
+        parameterArraySsv: Array<string>,
+        parameterArrayTsv: Array<string>,
+        parameterArrayPipes: Array<string>,
+        parameterArrayMulti: Array<string>,
+    ): Promise<void> {
+        const result = await __request({
+            method: 'GET',
+            path: \`/api/v\${OpenAPI.VERSION}/collectionFormat\`,
+            query: {
+                'parameterArrayCSV': parameterArrayCsv,
+                'parameterArraySSV': parameterArraySsv,
+                'parameterArrayTSV': parameterArrayTsv,
+                'parameterArrayPipes': parameterArrayPipes,
+                'parameterArrayMulti': parameterArrayMulti,
+            },
+        });
+        return result.body;
+    }
+
+}"
+`;
+
 exports[`v2 should generate: ./test/generated/v2/services/ComplexService.ts 1`] = `
 "/* istanbul ignore file */
 /* tslint:disable */
@@ -1761,7 +1817,7 @@ export class ComplexService {
     /**
      * @param parameterObject Parameter containing object
      * @param parameterReference Parameter containing reference
-     * @result ModelWithString Successful response
+     * @returns ModelWithString Successful response
      * @throws ApiError
      */
     public static async complexTypes(
@@ -1965,7 +2021,7 @@ import { OpenAPI } from '../core/OpenAPI';
 export class HeaderService {
 
     /**
-     * @result string Successful response
+     * @returns string Successful response
      * @throws ApiError
      */
     public static async callWithResultFromHeader(): Promise<string> {
@@ -2077,7 +2133,7 @@ import { OpenAPI } from '../core/OpenAPI';
 export class ResponseService {
 
     /**
-     * @result ModelWithString Message for default response
+     * @returns ModelWithString Message for default response
      * @throws ApiError
      */
     public static async callWithResponse(): Promise<ModelWithString> {
@@ -2089,7 +2145,7 @@ export class ResponseService {
     }
 
     /**
-     * @result ModelWithString Message for default response
+     * @returns ModelWithString Message for default response
      * @throws ApiError
      */
     public static async callWithDuplicateResponses(): Promise<ModelWithString> {
@@ -2106,10 +2162,10 @@ export class ResponseService {
     }
 
     /**
-     * @result any Message for 200 response
-     * @result ModelWithString Message for default response
-     * @result ModelThatExtends Message for 201 response
-     * @result ModelThatExtendsExtends Message for 202 response
+     * @returns any Message for 200 response
+     * @returns ModelWithString Message for default response
+     * @returns ModelThatExtends Message for 201 response
+     * @returns ModelThatExtendsExtends Message for 202 response
      * @throws ApiError
      */
     public static async callWithResponses(): Promise<{
@@ -2239,10 +2295,10 @@ export class TypesService {
      * @param parameterBoolean This is a boolean parameter
      * @param parameterObject This is an object parameter
      * @param id This is a number parameter
-     * @result number Response is a simple number
-     * @result string Response is a simple string
-     * @result boolean Response is a simple boolean
-     * @result any Response is a simple object
+     * @returns number Response is a simple number
+     * @returns string Response is a simple string
+     * @returns boolean Response is a simple boolean
+     * @returns any Response is a simple object
      * @throws ApiError
      */
     public static async types(
@@ -2503,6 +2559,9 @@ async function sendRequest(options: ApiRequestOptions, url: string): Promise<Res
         headers: await getHeaders(options),
         body: getRequestBody(options),
     };
+    if (OpenAPI.WITH_CREDENTIALS) {
+        request.credentials = 'include';
+    }
     return await fetch(url, request);
 }
 
@@ -2558,7 +2617,7 @@ function catchErrors(options: ApiRequestOptions, result: ApiResult): void {
 /**
  * Request using fetch client
  * @param options The request options from the the service
- * @result ApiResult
+ * @returns ApiResult
  * @throws ApiError
  */
 export async function request(options: ApiRequestOptions): Promise<ApiResult> {
@@ -2589,9 +2648,7 @@ export async function request(options: ApiRequestOptions): Promise<ApiResult> {
 
 
     return result;
-}
-
-"
+}"
 `;
 
 exports[`v3 should generate: ./test/generated/v3/index.ts 1`] = `
@@ -2697,6 +2754,7 @@ export { $SimpleReference } from './schemas/$SimpleReference';
 export { $SimpleString } from './schemas/$SimpleString';
 export { $SimpleStringWithPattern } from './schemas/$SimpleStringWithPattern';
 
+export { CollectionFormatService } from './services/CollectionFormatService';
 export { ComplexService } from './services/ComplexService';
 export { DefaultsService } from './services/DefaultsService';
 export { DuplicateService } from './services/DuplicateService';
@@ -3058,7 +3116,8 @@ import type { ModelWithString } from './ModelWithString';
 export type ModelThatExtends = (ModelWithString & {
     propExtendsA?: string,
     propExtendsB?: ModelWithString,
-});"
+});
+"
 `;
 
 exports[`v3 should generate: ./test/generated/v3/models/ModelThatExtendsExtends.ts 1`] = `
@@ -3075,7 +3134,8 @@ import type { ModelWithString } from './ModelWithString';
 export type ModelThatExtendsExtends = (ModelWithString & ModelThatExtends & {
     propExtendsC?: string,
     propExtendsD?: ModelWithString,
-});"
+});
+"
 `;
 
 exports[`v3 should generate: ./test/generated/v3/models/ModelWithArray.ts 1`] = `
@@ -3192,6 +3252,10 @@ export type ModelWithEnum = {
      * These are the HTTP error code enums
      */
     statusCode?: ModelWithEnum.statusCode;
+    /**
+     * Simple boolean enum
+     */
+    bool?: boolean;
 }
 
 export namespace ModelWithEnum {
@@ -3358,6 +3422,7 @@ export type ModelWithProperties = {
     number?: number;
     boolean?: boolean;
     reference?: ModelWithString;
+    'property with space'?: string;
     readonly '@namespace.string'?: string;
     readonly '@namespace.integer'?: number;
 }
@@ -4003,6 +4068,9 @@ export const $ModelWithEnum = {
         statusCode: {
             type: 'Enum',
         },
+        bool: {
+            type: 'boolean',
+        },
     },
 };"
 `;
@@ -4186,6 +4254,9 @@ export const $ModelWithProperties = {
         reference: {
             type: 'ModelWithString',
         },
+        'property with space': {
+            type: 'string',
+        },
         '@namespace.string': {
             type: 'string',
             isReadOnly: true,
@@ -4290,6 +4361,47 @@ export const $SimpleStringWithPattern = {
 };"
 `;
 
+exports[`v3 should generate: ./test/generated/v3/services/CollectionFormatService.ts 1`] = `
+"/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
+import { request as __request } from '../core/request';
+import { OpenAPI } from '../core/OpenAPI';
+
+export class CollectionFormatService {
+
+    /**
+     * @param parameterArrayCsv This is an array parameter that is send as csv format (comma-separated values)
+     * @param parameterArraySsv This is an array parameter that is send as ssv format (space-separated values)
+     * @param parameterArrayTsv This is an array parameter that is send as tsv format (tab-separated values)
+     * @param parameterArrayPipes This is an array parameter that is send as pipes format (pipe-separated values)
+     * @param parameterArrayMulti This is an array parameter that is send as multi format (multiple parameter instances)
+     * @throws ApiError
+     */
+    public static async collectionFormat(
+        parameterArrayCsv: Array<string> | null,
+        parameterArraySsv: Array<string> | null,
+        parameterArrayTsv: Array<string> | null,
+        parameterArrayPipes: Array<string> | null,
+        parameterArrayMulti: Array<string> | null,
+    ): Promise<void> {
+        const result = await __request({
+            method: 'GET',
+            path: \`/api/v\${OpenAPI.VERSION}/collectionFormat\`,
+            query: {
+                'parameterArrayCSV': parameterArrayCsv,
+                'parameterArraySSV': parameterArraySsv,
+                'parameterArrayTSV': parameterArrayTsv,
+                'parameterArrayPipes': parameterArrayPipes,
+                'parameterArrayMulti': parameterArrayMulti,
+            },
+        });
+        return result.body;
+    }
+
+}"
+`;
+
 exports[`v3 should generate: ./test/generated/v3/services/ComplexService.ts 1`] = `
 "/* istanbul ignore file */
 /* tslint:disable */
@@ -4306,7 +4418,7 @@ export class ComplexService {
     /**
      * @param parameterObject Parameter containing object
      * @param parameterReference Parameter containing reference
-     * @result ModelWithString Successful response
+     * @returns ModelWithString Successful response
      * @throws ApiError
      */
     public static async complexTypes(
@@ -4337,7 +4449,7 @@ export class ComplexService {
     /**
      * @param id
      * @param requestBody
-     * @result ModelWithString Success
+     * @returns ModelWithString Success
      * @throws ApiError
      */
     public static async complexParams(
@@ -4540,7 +4652,7 @@ import { OpenAPI } from '../core/OpenAPI';
 export class HeaderService {
 
     /**
-     * @result string Successful response
+     * @returns string Successful response
      * @throws ApiError
      */
     public static async callWithResultFromHeader(): Promise<string> {
@@ -4569,7 +4681,7 @@ import { OpenAPI } from '../core/OpenAPI';
 export class MultipartService {
 
     /**
-     * @result any OK
+     * @returns any OK
      * @throws ApiError
      */
     public static async multipartResponse(): Promise<{
@@ -4761,7 +4873,7 @@ import { OpenAPI } from '../core/OpenAPI';
 export class ResponseService {
 
     /**
-     * @result ModelWithString
+     * @returns ModelWithString
      * @throws ApiError
      */
     public static async callWithResponse(): Promise<ModelWithString> {
@@ -4773,7 +4885,7 @@ export class ResponseService {
     }
 
     /**
-     * @result ModelWithString Message for default response
+     * @returns ModelWithString Message for default response
      * @throws ApiError
      */
     public static async callWithDuplicateResponses(): Promise<ModelWithString> {
@@ -4790,10 +4902,10 @@ export class ResponseService {
     }
 
     /**
-     * @result any Message for 200 response
-     * @result ModelWithString Message for default response
-     * @result ModelThatExtends Message for 201 response
-     * @result ModelThatExtendsExtends Message for 202 response
+     * @returns any Message for 200 response
+     * @returns ModelWithString Message for default response
+     * @returns ModelThatExtends Message for 201 response
+     * @returns ModelThatExtendsExtends Message for 202 response
      * @throws ApiError
      */
     public static async callWithResponses(): Promise<{
@@ -4915,41 +5027,41 @@ import { OpenAPI } from '../core/OpenAPI';
 export class TypesService {
 
     /**
-     * @param parameterObject This is an object parameter
      * @param parameterArray This is an array parameter
      * @param parameterDictionary This is a dictionary parameter
      * @param parameterEnum This is an enum parameter
      * @param parameterNumber This is a number parameter
      * @param parameterString This is a string parameter
      * @param parameterBoolean This is a boolean parameter
+     * @param parameterObject This is an object parameter
      * @param id This is a number parameter
-     * @result number Response is a simple number
-     * @result string Response is a simple string
-     * @result boolean Response is a simple boolean
-     * @result any Response is a simple object
+     * @returns number Response is a simple number
+     * @returns string Response is a simple string
+     * @returns boolean Response is a simple boolean
+     * @returns any Response is a simple object
      * @throws ApiError
      */
     public static async types(
-        parameterObject: any,
         parameterArray: Array<string> | null,
         parameterDictionary: any,
         parameterEnum: 'Success' | 'Warning' | 'Error' | null,
         parameterNumber: number = 123,
         parameterString: string | null = 'default',
         parameterBoolean: boolean | null = true,
+        parameterObject: any = null,
         id?: number,
     ): Promise<number | string | boolean | any> {
         const result = await __request({
             method: 'GET',
             path: \`/api/v\${OpenAPI.VERSION}/types\`,
             query: {
-                'parameterObject': parameterObject,
                 'parameterArray': parameterArray,
                 'parameterDictionary': parameterDictionary,
                 'parameterEnum': parameterEnum,
                 'parameterNumber': parameterNumber,
                 'parameterString': parameterString,
                 'parameterBoolean': parameterBoolean,
+                'parameterObject': parameterObject,
             },
         });
         return result.body;
@@ -4969,7 +5081,7 @@ export class UploadService {
 
     /**
      * @param file Supply a file reference for upload
-     * @result boolean
+     * @returns boolean
      * @throws ApiError
      */
     public static async uploadFile(
