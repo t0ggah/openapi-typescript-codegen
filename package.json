@@ -1,15 +1,15 @@
 {
-    "name": "openapi-typescript-codegen",
+    "name": "openapi-typescript-config-codegen",
     "version": "0.9.0",
-    "description": "Library that generates Typescript clients based on the OpenAPI specification.",
+    "description": "Library that generates Typescript clients based on the OpenAPI specification. With support for passing context per request.",
     "author": "Ferdi Koomen",
-    "homepage": "https://github.com/ferdikoomen/openapi-typescript-codegen",
+    "homepage": "https://github.com/unfold/openapi-typescript-codegen",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ferdikoomen/openapi-typescript-codegen.git"
+        "url": "git+https://github.com/unfold/openapi-typescript-codegen.git"
     },
     "bugs": {
-        "url": "https://github.com/ferdikoomen/openapi-typescript-codegen/issues"
+        "url": "https://github.com/unfold/openapi-typescript-codegen/issues"
     },
     "license": "MIT",
     "keywords": [

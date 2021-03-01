@@ -1,5 +1,7 @@
 # OpenAPI Typescript Codegen
 
+** Forked from https://github.com/ferdikoomen/openapi-typescript-codegen in order to support per-request context parameter and custom request function **
+
 [![NPM][npm-image]][npm-url]
 [![License][license-image]][license-url]
 [![Build Status][travis-image]][travis-url]
