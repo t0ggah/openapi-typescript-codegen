@@ -4850,7 +4850,7 @@ export class RequestBodyService {
      * @param requestBody A reusable request body
      * @throws ApiError
      */
-    public static async postRequestBodyService(
+    public static async postApiVApiVersionRequestBody(
         requestBody?: ModelWithString,
         context?: any): Promise<void> {
             const result = await __request({
