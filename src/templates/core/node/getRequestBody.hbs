@@ -1,6 +1,6 @@
 function getRequestBody(options: ApiRequestOptions): BodyInit | undefined {
     if (options.formData) {
-        return getFormData(options.formData);
+        return getFormData(options.formData) as BodyInit;
     }
     if (options.body) {
         if (isString(options.body) || isBinary(options.body)) {
