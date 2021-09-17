@@ -126,7 +126,7 @@ function isStringWithValue(value: any): value is string {
 }
 
 function isBlob(value: any): value is Blob {
-    return value instanceof Blob;
+    return value.constructor.name === 'Blob'
 }
 
 function getQueryString(params: Record<string, any>): string {
@@ -2458,7 +2458,7 @@ function isStringWithValue(value: any): value is string {
 }
 
 function isBlob(value: any): value is Blob {
-    return value instanceof Blob;
+    return value.constructor.name === 'Blob'
 }
 
 function getQueryString(params: Record<string, any>): string {

@@ -4,7 +4,7 @@ function getRequestBody(options: ApiRequestOptions): BodyInit | undefined {
     }
     if (options.body) {
         if (isString(options.body) || isBinary(options.body)) {
-            return options.body;
+            return options.body as BodyInit;
         } else {
             return JSON.stringify(options.body);
         }
