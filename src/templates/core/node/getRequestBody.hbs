@@ -3,7 +3,7 @@ function getRequestBody(options: ApiRequestOptions): BodyInit | undefined {
         return getFormData(options.formData) as BodyInit;
     }
     if (options.body) {
-        if (isString(options.body) || isBinary(options.body) || options.body instanceof Stream)) {
+        if (isString(options.body) || isBinary(options.body) || options.body instanceof Stream) {
             return options.body as BodyInit;
         } else {
             return JSON.stringify(options.body);
