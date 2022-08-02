@@ -1,6 +1,6 @@
 {
     "name": "openapi-typescript-config-codegen",
-    "version": "0.9.4",
+    "version": "0.9.5",
     "description": "Library that generates Typescript clients based on the OpenAPI specification. With support for passing context per request.",
     "author": "Ferdi Koomen",
     "homepage": "https://github.com/unfold/openapi-typescript-codegen",
